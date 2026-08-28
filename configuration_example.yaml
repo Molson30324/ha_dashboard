@@ -1,0 +1,222 @@
+# Example Home Assistant Configuration
+# This file shows recommended settings for using the Advanced Home Dashboard
+
+# Core Home Assistant Configuration
+homeassistant:
+  name: Home
+  latitude: 40.7128
+  longitude: -74.0060
+  elevation: 0
+  unit_system: metric
+  time_zone: America/New_York
+  
+  # Customize entities for better dashboard display
+  customize:
+    # Lights
+    light.living_room:
+      friendly_name: "Living Room Light"
+      icon: mdi:lightbulb-on-20
+      area_id: living_room
+    
+    light.bedroom:
+      friendly_name: "Bedroom Light"
+      icon: mdi:lightbulb-on-20
+      area_id: bedroom
+    
+    light.kitchen:
+      friendly_name: "Kitchen Light"
+      icon: mdi:lightbulb-on-20
+      area_id: kitchen
+    
+    # Switches
+    switch.ceiling_fan:
+      friendly_name: "Ceiling Fan"
+      icon: mdi:fan
+      area_id: living_room
+    
+    switch.pump:
+      friendly_name: "Water Pump"
+      icon: mdi:water-pump
+      area_id: garage
+    
+    # Climate
+    climate.living_room_thermostat:
+      friendly_name: "Living Room Thermostat"
+      icon: mdi:thermostat
+      area_id: living_room
+    
+    # Sensors
+    sensor.outside_temperature:
+      friendly_name: "Outside Temperature"
+      icon: mdi:thermometer
+      area_id: outside
+      device_class: temperature
+    
+    sensor.humidity:
+      friendly_name: "Humidity"
+      icon: mdi:water-percent
+      area_id: living_room
+      device_class: humidity
+    
+    # Scripts
+    script.movie_mode:
+      friendly_name: "Movie Mode"
+      icon: mdi:play-circle
+      area_id: living_room
+    
+    script.good_night:
+      friendly_name: "Good Night"
+      icon: mdi:sleep
+      area_id: bedroom
+    
+    # Automations
+    automation.sunset_lights:
+      friendly_name: "Sunset Lights"
+      icon: mdi:alarm-light-on
+    
+    automation.morning_routine:
+      friendly_name: "Morning Routine"
+      icon: mdi:alarm-light-on
+
+# HTTP Configuration (required for CORS and dashboard access)
+http:
+  # Allow dashboard to connect from local and remote
+  cors_allowed_origins:
+    - http://localhost:8123
+    - http://127.0.0.1:8123
+    # Add your Home Assistant IP address
+    - http://192.168.1.100:8123
+    # For remote access (optional)
+    # - https://your-domain.duckdns.org
+
+# Frontend Configuration
+frontend:
+  # Keep default settings for best compatibility
+  development_mode: false
+
+# Logger Configuration (optional - for debugging)
+logger:
+  default: info
+  # Uncomment to debug dashboard
+  # logs:
+  #   custom_components.ha_dashboard: debug
+
+# Groups - Organize entities for easy access
+group:
+  # Morning routine group
+  morning_routine:
+    name: "Morning Routine"
+    entities:
+      - light.bedroom
+      - light.kitchen
+      - climate.living_room_thermostat
+      - switch.coffee_maker
+  
+  # Evening routine group
+  evening_routine:
+    name: "Evening Routine"
+    entities:
+      - light.living_room
+      - light.bedroom
+      - switch.ceiling_fan
+      - climate.living_room_thermostat
+
+# Scripts - Automation actions for the dashboard
+script:
+  movie_mode:
+    alias: "Movie Mode"
+    sequence:
+      - service: light.turn_off
+        data:
+          entity_id: light.living_room
+      - service: light.turn_dim
+        data:
+          entity_id: light.living_room
+          brightness: 50
+      - service: media_player.turn_on
+        data:
+          entity_id: media_player.living_room_tv
+  
+  good_night:
+    alias: "Good Night"
+    sequence:
+      - service: light.turn_off
+        data:
+          entity_id: group.all_lights
+      - service: lock.lock
+        data:
+          entity_id: lock.front_door
+      - service: alarm_control_panel.alarm_arm_home
+        data:
+          entity_id: alarm_control_panel.home_alarm
+
+# Automations
+automation: !include automations.yaml
+
+# Scenes
+scene: !include scenes.yaml
+
+# Defaults
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# Automations file content (save as automations.yaml)
+# automation:
+#   - alias: "Sunset Lights"
+#     trigger:
+#       platform: sun
+#       event: sunset
+#     action:
+#       service: light.turn_on
+#       data:
+#         entity_id: light.living_room
+#         brightness: 150
+#   
+#   - alias: "Morning Routine"
+#     trigger:
+#       platform: time
+#       at: "07:00:00"
+#     action:
+#       service: script.turn_on
+#       data:
+#         entity_id: script.morning_routine
+#   
+#   - alias: "Night Mode"
+#     trigger:
+#       platform: time
+#       at: "22:00:00"
+#     action:
+#       service: script.turn_on
+#       data:
+#         entity_id: script.good_night
+
+# Scenes file content (save as scenes.yaml)
+# scene:
+#   - name: Movie Time
+#     entities:
+#       light.living_room:
+#         state: on
+#         brightness: 50
+#       media_player.living_room_tv:
+#         state: on
+#   
+#   - name: Bright
+#     entities:
+#       light.living_room:
+#         state: on
+#         brightness: 255
+#       light.kitchen:
+#         state: on
+#         brightness: 255
+#   
+#   - name: Relaxing
+#     entities:
+#       light.living_room:
+#         state: on
+#         brightness: 100
+#       light.bedroom:
+#         state: on
+#         brightness: 80
