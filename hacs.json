@@ -5,9 +5,9 @@
   "hacs": "1.33.0",
   "requirements": [],
   "render_readme": true,
-  "issues": "https://github.com/yourusername/ha_dashboard/issues",
-  "documentation": "https://github.com/yourusername/ha_dashboard/wiki",
-  "repository": "https://github.com/yourusername/ha_dashboard",
-  "codeowners": ["@yourusername"],
+  "issues": "https://github.com/Molson30324/ha_dashboard/issues",
+  "documentation": "https://github.com/Molson30324/ha_dashboard/wiki",
+  "repository": "https://github.com/Molson30324/ha_dashboard",
+  "codeowners": ["@Molson30324"],
   "support": "https://community.home-assistant.io/"
 }
